@@ -1,0 +1,72 @@
+# SystemGym: Infraestructura local que emula Azure
+# Uso: Copia .env.example a .env y ejecuta 'docker compose up -d'
+# Cada Servicio tiene su equivalente administrado en Azure
+# El código solo cambia la cadena de conexión, nunca la lógica
+
+name: systemgym
+
+services:
+  # Azure Database for PostgreSQL Flexible Server
+  postgres:
+    image: pgvector/pgvector:pg17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-systemgym}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: ${POSTGRES_DB:-systemgym}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-systemgym}"]
+      interval: 10s
+      retries: 5
+
+  # Azure Cache for Redis
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "--requirepass", "${REDIS_PASSWORD:?}"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  # Azure Blob Storage (Emulador oficial de Microsoft)
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    restart: unless-stopped
+    command: ["azurite", "--blobHost", "0.0.0.0", "--tableHost", "0.0.0.0", "--location", "/data", "--skipApiVersionCheck"]
+    ports:
+      - "10000:10000" # Blob
+      - "10001:10001" # Queu
+      - "10002:10002" # Table
+    volumes:
+      - azuritedata:/data
+
+  # Application Insights / Azure Monitor: Collector OTLP + Grafana, Loki, Tempo, y Prometeus en un solo contenedor
+  observabilidad:
+    image: grafana/otel/lgtm:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000" # Grafana (admin)
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
+    volumes:
+      - lgtmdata:/data
+
+  # Correo de pruebas (sustituye a Azure Communication Services en local)
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "8025:8025" # Bandeja Web
+      - "1025:1025" # SMTP
+
+volumes:
+  pgdata:
+  redisdata:
+  azuritedata:
+  lgtmdata:
