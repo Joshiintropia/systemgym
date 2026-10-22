@@ -1,6 +1,28 @@
-@SystemGym.Api_HostAddress = http://localhost:5081
+@host = http://localhost:5081
 
-GET {{SystemGym.Api_HostAddress}}/weatherforecast/
+GET {{host}}/socios/
 Accept: application/json
-
 ###
+
+GET {{host}}/socios/01a161cd-f3aa-7ad1-91aa-80bc8b4795a7
+Accept: application/json
+###
+
+POST {{host}}/socios
+Content-Type: application/json
+
+{
+    "nombre": "Mariana",
+    "apellido": "Vaca Escoto",
+    "email": "vaquita-feliz@ejemplo.com",
+    "telefono": "5512488880"
+}
+###
+
+PATCH {{host}}/socios/socios/01a161cd-f3aa-7ad1-91aa-80bc8b4795a7
+Content-Type: application/json
+
+{
+  "telefono": "5564807229",
+  "nombre": "Joshua"
+}

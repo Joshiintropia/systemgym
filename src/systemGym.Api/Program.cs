@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using SystemGym.Api.Data;
+using SystemGym.Api.Socios;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,8 @@ app.MapHealthChecks("/health", new HealthCheckOptions
         }));
     }
 });
+
+app.MapSocios();
 
 app.Run();
 
