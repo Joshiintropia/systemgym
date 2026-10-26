@@ -1,13 +1,15 @@
 @host = http://localhost:5081
-
+@socioId = 01a161d5-4c28-78d8-b196-f25fcc2e4cb5
+@planId = "01a17617-998d-7a0c-8813-e41a4fc72a26"
+### Listar socios
 GET {{host}}/socios/
 Accept: application/json
-###
 
-GET {{host}}/socios/01a161cd-f3aa-7ad1-91aa-80bc8b4795a7
+### Traer un solo socio
+GET {{host}}/socios/{{socioId}}
 Accept: application/json
-###
 
+### Crear Socio
 POST {{host}}/socios
 Content-Type: application/json
 
@@ -17,12 +19,47 @@ Content-Type: application/json
     "email": "vaquita-feliz@ejemplo.com",
     "telefono": "5512488880"
 }
-###
 
-PATCH {{host}}/socios/socios/01a161cd-f3aa-7ad1-91aa-80bc8b4795a7
+### Modificar socio
+PATCH {{host}}/socios/{{socioId}}
 Content-Type: application/json
 
 {
-  "telefono": "5564807229",
-  "nombre": "Joshua"
+  "email": "vaquita@prueba.com"
+}
+
+### Alta de plan
+POST {{host}}/planes
+Content-Type: application/json
+
+{
+  "nombre": "Semanal",
+  "precio": 137.5,
+  "duracionDias": 7
+}
+
+### Listar planes
+GET {{host}}/planes
+Accept: application/json
+
+### Traer un solo plan
+GET {{host}}/planes/{{planId}}
+Accept: application/json
+
+### Modificar plan
+PATCH {{host}}/planes/{{planId}}
+Content-Type: application/json
+
+{
+  "nombre": "nuevo nombre",
+  "precio": 0.0,
+  "duracionDias": 15
+}
+
+### Asignar un plan a un socio
+POST {{host}}/planes/socios/{{socioId}}/membresia
+Content-Type: application/json
+
+{
+  "planId": {{planId}}
 }

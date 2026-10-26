@@ -22,6 +22,75 @@ namespace SystemGym.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("SystemGym.Api.Planes.Membresia", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateOnly>("FechaFin")
+                        .HasColumnType("date")
+                        .HasColumnName("fecha_fin");
+
+                    b.Property<DateOnly>("FechaInicio")
+                        .HasColumnType("date")
+                        .HasColumnName("fecha_inicio");
+
+                    b.Property<Guid>("PlanId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("plan_id");
+
+                    b.Property<Guid>("SocioId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("socio_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_menbresias");
+
+                    b.HasIndex("PlanId")
+                        .HasDatabaseName("ix_menbresias_plan_id");
+
+                    b.HasIndex("SocioId", "FechaFin")
+                        .HasDatabaseName("ix_menbresias_socio_id_fecha_fin");
+
+                    b.ToTable("menbresias", (string)null);
+                });
+
+            modelBuilder.Entity("SystemGym.Api.Planes.Plan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("Activo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("activo");
+
+                    b.Property<int>("DuracionDias")
+                        .HasColumnType("integer")
+                        .HasColumnName("duracion_dias");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("nombre");
+
+                    b.Property<decimal>("Precio")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("precio");
+
+                    b.HasKey("Id")
+                        .HasName("pk_plan");
+
+                    b.ToTable("plan", (string)null);
+                });
+
             modelBuilder.Entity("SystemGym.Api.Socio", b =>
                 {
                     b.Property<Guid>("Id")
@@ -59,6 +128,27 @@ namespace SystemGym.Api.Migrations
                         .HasName("pk_socios");
 
                     b.ToTable("socios", (string)null);
+                });
+
+            modelBuilder.Entity("SystemGym.Api.Planes.Membresia", b =>
+                {
+                    b.HasOne("SystemGym.Api.Planes.Plan", "Plan")
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_menbresias_plan_plan_id");
+
+                    b.HasOne("SystemGym.Api.Socio", "Socio")
+                        .WithMany()
+                        .HasForeignKey("SocioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_menbresias_socios_socio_id");
+
+                    b.Navigation("Plan");
+
+                    b.Navigation("Socio");
                 });
 #pragma warning restore 612, 618
         }

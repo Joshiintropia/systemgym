@@ -47,26 +47,25 @@ public static class SociosEndpoints
 
         grupo.MapPatch("/{id:guid}", async (Guid id, ActualizarSocioDtoRequest req, GymDbContext db, ILogger<Socio> log) =>
             {
-                    var socio  = await db.Socios.FindAsync(id);
+                var socio  = await db.Socios.FindAsync(id);
 
-                    if (socio is null)
-                    {
-                        return Results.NotFound();
-                    }
-                    
-                    if (!string.IsNullOrWhiteSpace(req.Nombre)) socio.Nombre = req.Nombre.Trim();
-                    
-                    if (!string.IsNullOrWhiteSpace(req.Apellido)) socio.Apellido = req.Apellido.Trim();
-                    
-                    if (!string.IsNullOrWhiteSpace(req.Email)) socio.Email = req.Email.Trim();
-                    
-                    if (!string.IsNullOrWhiteSpace(req.Telefono)) socio.Telefono = req.Telefono.Trim();
-                    
-                    db.Update(socio);
-                    await db.SaveChangesAsync();
-                    log.LogInformation("Actualizacion de socio: {idSocio}",  socio.Id);
-                    
-                    return Results.NoContent();
+                if (socio is null)
+                {
+                    return Results.NotFound();
+                }
+                
+                if (!string.IsNullOrWhiteSpace(req.Nombre)) socio.Nombre = req.Nombre.Trim();
+                
+                if (!string.IsNullOrWhiteSpace(req.Apellido)) socio.Apellido = req.Apellido.Trim();
+                
+                if (!string.IsNullOrWhiteSpace(req.Email)) socio.Email = req.Email.Trim();
+                
+                if (!string.IsNullOrWhiteSpace(req.Telefono)) socio.Telefono = req.Telefono.Trim();
+                
+                await db.SaveChangesAsync();
+                log.LogInformation("Actualizacion de socio: {idSocio}",  socio.Id);
+                
+                return Results.NoContent();
             }
             
         );
