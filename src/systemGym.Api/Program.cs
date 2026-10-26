@@ -1,6 +1,8 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.EntityFrameworkCore;
+using SystemGym.Api.Accesos;
 using SystemGym.Api.Data;
 using SystemGym.Api.Planes;
 using SystemGym.Api.Socios;
@@ -62,6 +64,7 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 
 app.MapSocios();
 app.MapPlanes();
+app.MapAcceso();
 
 app.Run();
 

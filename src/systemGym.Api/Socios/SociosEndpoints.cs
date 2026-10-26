@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.EntityFrameworkCore;
+using QRCoder;
 using SystemGym.Api.Data;
 
 namespace SystemGym.Api.Socios;
@@ -21,6 +22,17 @@ public static class SociosEndpoints
         grupo.MapGet("/{id:guid}", async (Guid id, GymDbContext db) =>
             await db.Socios.FindAsync(id) is { } socio ? Results.Ok(socio) : Results.NotFound()
         );
+
+        grupo.MapGet("/{socioId:guid}/qr", async (Guid socioId, GymDbContext db) =>
+        {
+            if (!await db.Socios.AnyAsync(s => s.Id == socioId))
+            {
+                Results.NotFound();
+            }
+            
+            byte[] qr = PngByteQRCodeHelper.GetQRCode(socioId.ToString(), QRCodeGenerator.ECCLevel.Q, 10);
+            return Results.File(qr, "image/png");
+        });
 
         grupo.MapPost("/", async (AltaSocioRequest req, GymDbContext db, ILogger<Socio> log) =>
             {

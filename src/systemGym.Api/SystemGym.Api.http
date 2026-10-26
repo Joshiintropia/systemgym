@@ -1,5 +1,5 @@
 @host = http://localhost:5081
-@socioId = 01a161d5-4c28-78d8-b196-f25fcc2e4cb5
+@socioId = "01a161d5-4c28-78d8-b196-f25fcc2e4cb5"
 @planId = "01a17617-998d-7a0c-8813-e41a4fc72a26"
 ### Listar socios
 GET {{host}}/socios/
@@ -62,4 +62,12 @@ Content-Type: application/json
 
 {
   "planId": {{planId}}
+}
+
+###
+POST {{host}}/acceso
+Content-Type: application/json
+
+{
+  "socioId": {{socioId}}
 }
